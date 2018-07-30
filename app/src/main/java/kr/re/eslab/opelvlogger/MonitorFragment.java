@@ -1,7 +1,9 @@
 package kr.re.eslab.opelvlogger;
 
 import android.app.ListFragment;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Environment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,7 +14,13 @@ import android.widget.ListView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import static kr.re.eslab.opelvlogger.MainActivity.UART_PROFILE_CONNECTED;
 import static kr.re.eslab.opelvlogger.MainActivity.mService;
@@ -27,6 +35,13 @@ public class MonitorFragment extends ListFragment {
     private ToggleButton setID_typeButton;
     private EditText input_ID;
 
+    SharedPreferences sp;
+    SharedPreferences.Editor editor;
+
+    private static String folderName = Environment.getExternalStorageDirectory().getAbsolutePath() + "/bOBD";
+    private String fileName = "";
+
+    TimerTask tt;
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
@@ -35,13 +50,37 @@ public class MonitorFragment extends ListFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        sp = this.getActivity().getSharedPreferences("obd", 0);
     }
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
     }
+
+
+    public void WriteTextFile(String foldername, String filename, String contents) {
+
+        try {
+            File dir = new File(foldername);
+            //디렉토리 폴더가 없으면 생성함
+            if (!dir.exists()) {
+                dir.mkdir();
+            }
+            //파일 output stream 생성
+            FileWriter fos = new FileWriter(foldername + "/" + filename+".txt", true);
+            //파일쓰기
+            BufferedWriter writer = new BufferedWriter(fos);
+            writer.write(contents+"\r\n");
+            writer.flush();
+
+            writer.close();
+            fos.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -53,6 +92,25 @@ public class MonitorFragment extends ListFragment {
         input_ID = (EditText) view.findViewById(R.id.input_ID);
         monitorItemListView = (ListView) view.findViewById(android.R.id.list);
         // Adapter 생성 및 Adapter 지정.
+
+        Button startBtn = (Button) view.findViewById(R.id.startBtn);
+
+        tt = new TimerTask() {
+            @Override
+            public void run() {
+                WriteTextFile(folderName, "test_N", sp.getString("NPid", "-"));
+                WriteTextFile(folderName, "test_S", sp.getString("SPid", "-"));
+            }
+        };
+
+        startBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Timer timer = new Timer();
+                timer.schedule(tt, 0, 500);
+            }
+        });
+
 
         String message = "MONITOR";
         byte[] value = new byte[0];

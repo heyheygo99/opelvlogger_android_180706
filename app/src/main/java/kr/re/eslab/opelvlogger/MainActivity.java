@@ -35,6 +35,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -49,6 +51,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import static kr.re.eslab.opelvlogger.MonitorFragment.monitorItemListViewAdapter;
 
@@ -82,11 +86,10 @@ public class MainActivity extends AppCompatActivity
     private String receiveMessage;
     private String[] receiveMessage_split;
 
-    private static String folderName = Environment.getExternalStorageDirectory().getAbsolutePath() + "/bOBD";
-    private String fileName = "";
-
-    private SharedPreferences sp;
+    SharedPreferences sp;
     SharedPreferences.Editor editor;
+
+    TimerTask tt;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -390,6 +393,8 @@ public class MainActivity extends AppCompatActivity
                                             editor.commit();
 //                                            WriteTextFile(folderName, "test_N.txt", receiveMessage);
 //                                            WriteTextFile(folderName, "test_N.txt", "\r\n");
+
+//                                            Log.e("test", "enable?");
                                             break;
                                         } else if (receiveMessage_split[0].equals("S") && receiveMessage_split[3].equalsIgnoreCase(monitorItemListViewAdapter.getItem(j).get_data(1)) && receiveMessage_split[4].equalsIgnoreCase(monitorItemListViewAdapter.getItem(j).get_data(2))) {
                                             monitorItemListViewAdapter.setItem(j, receiveMessage); // Monitor Listview의 해당 ID 부분 갱신
@@ -417,28 +422,6 @@ public class MainActivity extends AppCompatActivity
                 }
             }
         };
-    }
-
-    public void WriteTextFile(String foldername, String filename, String contents) {
-
-        try {
-            File dir = new File(foldername);
-            //디렉토리 폴더가 없으면 생성함
-            if (!dir.exists()) {
-                dir.mkdir();
-            }
-            //파일 output stream 생성
-            FileWriter fos = new FileWriter(foldername + "/" + filename, true);
-            //파일쓰기
-            BufferedWriter writer = new BufferedWriter(fos);
-            writer.write(contents);
-            writer.flush();
-
-            writer.close();
-            fos.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
 
     private void service_init() {

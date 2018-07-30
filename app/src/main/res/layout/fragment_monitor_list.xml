@@ -1,126 +1,84 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/MainActivityConstraintLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/whitegrey"
+    android:orientation="vertical"
+    android:weightSum="10"
     tools:context="kr.re.eslab.opelvlogger.MainActivity">
 
-
-    <ToggleButton
-        android:id="@+id/setID_typeButton"
-        android:layout_width="0dp"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:textOff="Non-Standard OBD-II"
-        android:textOn="Standard OBD-II"
-        android:textSize="14sp"
-        app:layout_constraintBottom_toBottomOf="@+id/horizontal_guideline"
-        app:layout_constraintLeft_toLeftOf="@+id/base_vertical_guideline"
-        app:layout_constraintRight_toRightOf="@+id/inputID_vertical_guideline"
-        app:layout_constraintTop_toTopOf="parent"
-        />
+        android:layout_weight="1"
+        android:weightSum="10"
+        android:orientation="horizontal">
 
-    <EditText
-        android:id="@+id/input_ID"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:digits="0123456789ABCDEF"
-        android:gravity="center"
-        android:hint="Input ID"
-        android:maxLength="3"
-        android:inputType="textCapCharacters"
-        android:textColor="@color/black"
-        android:textSize="18sp"
-        app:layout_constraintBottom_toBottomOf="@+id/horizontal_guideline"
-        app:layout_constraintLeft_toLeftOf="@+id/inputID_vertical_guideline"
-        app:layout_constraintRight_toRightOf="@+id/addListButton_vertical_guideline"
-        app:layout_constraintTop_toTopOf="parent" />
+        <ToggleButton
+            android:id="@+id/setID_typeButton"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:textOff="Non-Standard OBD-II"
+            android:textOn="Standard OBD-II"
+            android:textSize="14sp"
+            android:layout_weight="5"
+            />
+
+        <EditText
+            android:id="@+id/input_ID"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:digits="0123456789ABCDEF"
+            android:gravity="center"
+            android:hint="Input ID"
+            android:maxLength="3"
+            android:inputType="textCapCharacters"
+            android:textColor="@color/black"
+            android:textSize="18sp"
+            android:layout_weight="3"
+            />
 
 
-    <Button
-        android:id="@+id/addListItembutton"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:text="Add"
-        android:textColor="#000000"
-        android:textSize="14sp"
-        app:layout_constraintBottom_toBottomOf="@+id/horizontal_guideline"
-        app:layout_constraintLeft_toLeftOf="@+id/addListButton_vertical_guideline"
-        app:layout_constraintRight_toRightOf="@+id/end_vertical_guideline"
-        app:layout_constraintTop_toTopOf="parent" />
+        <Button
+            android:id="@+id/addListItembutton"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:text="Add"
+            android:textColor="#000000"
+            android:textSize="14sp"
+            android:layout_weight="2"
+            />
+
+
+    </LinearLayout>
+
 
     <ListView
         android:id="@android:id/list"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
+        android:layout_weight="8"
         android:divider="#ffcc22"
         android:dividerHeight="1sp"
         android:scrollbars="vertical"
         android:stackFromBottom="true"
         android:visibility="visible"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/horizontal_guideline"
-        app:layout_constraintVertical_bias="0.0" />
+        />
 
-    <android.support.constraint.Guideline
-        android:id="@+id/horizontal_guideline"
-        android:layout_width="0dp"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:orientation="horizontal"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintGuide_percent="0.1"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:layout_weight="1"
+        android:orientation="horizontal">
+        <Button
+            android:id="@+id/startBtn"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="Start"/>
 
+    </LinearLayout>
 
-    <android.support.constraint.Guideline
-        android:id="@+id/base_vertical_guideline"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:orientation="vertical"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintGuide_percent="0.025"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"/>
-
-    <android.support.constraint.Guideline
-        android:id="@+id/inputID_vertical_guideline"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:orientation="vertical"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintGuide_percent="0.50"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"/>
-
-    <android.support.constraint.Guideline
-        android:id="@+id/addListButton_vertical_guideline"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:orientation="vertical"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintGuide_percent="0.825"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"/>
-
-    <android.support.constraint.Guideline
-        android:id="@+id/end_vertical_guideline"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:orientation="vertical"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintGuide_percent="0.975"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"/>
-
-</android.support.constraint.ConstraintLayout>
+</LinearLayout>
