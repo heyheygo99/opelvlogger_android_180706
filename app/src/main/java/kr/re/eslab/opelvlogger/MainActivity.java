@@ -389,12 +389,11 @@ public class MainActivity extends AppCompatActivity
                                         if (receiveMessage_split[0].equals("N") && receiveMessage_split[1].equalsIgnoreCase(monitorItemListViewAdapter.getItem(j).get_MsgID())) {
                                             monitorItemListViewAdapter.setItem(j, receiveMessage); // Monitor Listview의 해당 ID 부분 갱신
 
-                                            editor.putString("NPid", receiveMessage);
+                                            editor.putString("NPid", receiveMessage_split[3]+receiveMessage_split[2]);
                                             editor.commit();
 //                                            WriteTextFile(folderName, "test_N.txt", receiveMessage);
 //                                            WriteTextFile(folderName, "test_N.txt", "\r\n");
 
-//                                            Log.e("test", "enable?");
                                             break;
                                         } else if (receiveMessage_split[0].equals("S") && receiveMessage_split[3].equalsIgnoreCase(monitorItemListViewAdapter.getItem(j).get_data(1)) && receiveMessage_split[4].equalsIgnoreCase(monitorItemListViewAdapter.getItem(j).get_data(2))) {
                                             monitorItemListViewAdapter.setItem(j, receiveMessage); // Monitor Listview의 해당 ID 부분 갱신

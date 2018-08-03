@@ -19,6 +19,8 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -94,20 +96,35 @@ public class MonitorFragment extends ListFragment {
         // Adapter 생성 및 Adapter 지정.
 
         Button startBtn = (Button) view.findViewById(R.id.startBtn);
+        String now = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
+        folderName = folderName + now;
 
         tt = new TimerTask() {
+            int steering;
+            int speed;
+
             @Override
             public void run() {
-                WriteTextFile(folderName, "test_N", sp.getString("NPid", "-"));
-                WriteTextFile(folderName, "test_S", sp.getString("SPid", "-"));
+                String now = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
+                String time = new SimpleDateFormat("HH:mm:ss.SSS").format(new Date());
+
+                steering = Integer.parseInt(sp.getString("NPid", "-"));
+                speed = Integer.parseInt(sp.getString("SPid", "-"));
+
+
+                WriteTextFile(folderName, fileName, now+"_"+time+", "+steering+", "+speed);
             }
         };
 
         startBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                String time = new SimpleDateFormat("HH:mm:ss.SSS").format(new Date());
+                fileName = time+".txt";
+
                 Timer timer = new Timer();
-                timer.schedule(tt, 0, 500);
+                timer.schedule(tt, 0, 100);
+
             }
         });
 
