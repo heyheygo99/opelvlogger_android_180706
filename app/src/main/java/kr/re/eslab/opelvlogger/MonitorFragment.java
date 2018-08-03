@@ -40,7 +40,7 @@ public class MonitorFragment extends ListFragment {
     SharedPreferences sp;
     SharedPreferences.Editor editor;
 
-    private static String folderName = Environment.getExternalStorageDirectory().getAbsolutePath() + "/bOBD";
+    private static String folderName = Environment.getExternalStorageDirectory().getAbsolutePath() + "/bOBD/";
     private String fileName = "";
 
     TimerTask tt;
@@ -101,18 +101,20 @@ public class MonitorFragment extends ListFragment {
 
         tt = new TimerTask() {
             int steering;
-            int speed;
+//            int speed;
 
             @Override
             public void run() {
                 String now = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
                 String time = new SimpleDateFormat("HH:mm:ss.SSS").format(new Date());
 
-                steering = Integer.parseInt(sp.getString("NPid", "-"));
-                speed = Integer.parseInt(sp.getString("SPid", "-"));
+                steering = Integer.parseInt(sp.getString("NPid", "-"), 16);
+//                speed = Integer.parseInt(sp.getString("SPid", "-"), 16);
 
+                if(steering > 32767)
+                    steering = steering - 65535;
 
-                WriteTextFile(folderName, fileName, now+"_"+time+", "+steering+", "+speed);
+                WriteTextFile(folderName, fileName, now+"_"+time+", "+steering/10);
             }
         };
 
@@ -120,7 +122,7 @@ public class MonitorFragment extends ListFragment {
             @Override
             public void onClick(View view) {
                 String time = new SimpleDateFormat("HH:mm:ss.SSS").format(new Date());
-                fileName = time+".txt";
+                fileName = time;
 
                 Timer timer = new Timer();
                 timer.schedule(tt, 0, 100);

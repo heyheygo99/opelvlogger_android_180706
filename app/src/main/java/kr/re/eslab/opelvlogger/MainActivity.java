@@ -398,7 +398,7 @@ public class MainActivity extends AppCompatActivity
                                         } else if (receiveMessage_split[0].equals("S") && receiveMessage_split[3].equalsIgnoreCase(monitorItemListViewAdapter.getItem(j).get_data(1)) && receiveMessage_split[4].equalsIgnoreCase(monitorItemListViewAdapter.getItem(j).get_data(2))) {
                                             monitorItemListViewAdapter.setItem(j, receiveMessage); // Monitor Listview의 해당 ID 부분 갱신
 
-                                            editor.putString("SPid", receiveMessage);
+                                            editor.putString("SPid", receiveMessage_split[5]);
                                             editor.commit();
 //                                            WriteTextFile(folderName, "test_S.txt", receiveMessage);
 //                                            WriteTextFile(folderName, "test_S.txt", "\r\n");
