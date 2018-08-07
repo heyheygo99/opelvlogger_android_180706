@@ -89,6 +89,8 @@ public class MainActivity extends AppCompatActivity
     SharedPreferences sp;
     SharedPreferences.Editor editor;
 
+    private static String folderName = Environment.getExternalStorageDirectory().getAbsolutePath() + "/Extract/";
+
     TimerTask tt;
 
     @Override
@@ -351,6 +353,7 @@ public class MainActivity extends AppCompatActivity
                                 else if(receiveMessage.contains("EXTRACT_ID") == true) {
                                     countDownTimerFlag = true;
                                     String[] text_split_result = receiveMessage.split(" ");
+                                    WriteTextFile(folderName, "test", receiveMessage);
                                     String id = text_split_result[1];
                                     if( id.contains("NULL") == true) {
                                         Toast.makeText(getApplicationContext(),"Fail - Extraction",Toast.LENGTH_SHORT).show();
@@ -421,6 +424,28 @@ public class MainActivity extends AppCompatActivity
                 }
             }
         };
+    }
+
+    public void WriteTextFile(String foldername, String filename, String contents) {
+
+        try {
+            File dir = new File(foldername);
+            //디렉토리 폴더가 없으면 생성함
+            if (!dir.exists()) {
+                dir.mkdir();
+            }
+            //파일 output stream 생성
+            FileWriter fos = new FileWriter(foldername + "/" + filename+".txt", true);
+            //파일쓰기
+            BufferedWriter writer = new BufferedWriter(fos);
+            writer.write(contents+"\r\n");
+            writer.flush();
+
+            writer.close();
+            fos.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private void service_init() {
