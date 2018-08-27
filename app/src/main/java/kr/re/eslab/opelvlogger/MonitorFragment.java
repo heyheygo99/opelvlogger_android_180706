@@ -101,27 +101,28 @@ public class MonitorFragment extends ListFragment {
 
         tt = new TimerTask() {
             int steering;
-//            int speed;
+            int speed, rpm;
 
             @Override
             public void run() {
                 String now = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
-                String time = new SimpleDateFormat("HH:mm:ss.SSS").format(new Date());
+                String time = new SimpleDateFormat("HH_mm_ss.SSS").format(new Date());
 
-                steering = Integer.parseInt(sp.getString("NPid", "-"), 16);
-//                speed = Integer.parseInt(sp.getString("SPid", "-"), 16);
+                steering = Integer.parseInt(sp.getString("Steering", "-"), 16);
+                speed = Integer.parseInt(sp.getString("Speed", "-"), 16);
+                rpm = Integer.parseInt(sp.getString("RPM", "-"));
 
                 if(steering > 32767)
                     steering = steering - 65535;
 
-                WriteTextFile(folderName, fileName, now+"_"+time+", "+steering/10);
+                WriteTextFile(folderName, fileName, now+"_"+time+", "+steering/10+", "+speed+", "+rpm);
             }
         };
 
         startBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String time = new SimpleDateFormat("HH:mm:ss.SSS").format(new Date());
+                String time = new SimpleDateFormat("HH_mm_ss.SSS").format(new Date());
                 fileName = time;
 
                 Timer timer = new Timer();
