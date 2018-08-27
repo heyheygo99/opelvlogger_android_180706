@@ -392,7 +392,8 @@ public class MainActivity extends AppCompatActivity
                                         if (receiveMessage_split[0].equals("N") && receiveMessage_split[1].equalsIgnoreCase(monitorItemListViewAdapter.getItem(j).get_MsgID())) {
                                             monitorItemListViewAdapter.setItem(j, receiveMessage); // Monitor Listview의 해당 ID 부분 갱신
 
-                                            editor.putString("NPid", receiveMessage_split[3]+receiveMessage_split[2]);
+                                            if(receiveMessage_split[4].equals("2B0"))
+                                                editor.putString("Steering", receiveMessage_split[3]+receiveMessage_split[2]);
                                             editor.commit();
 //                                            WriteTextFile(folderName, "test_N.txt", receiveMessage);
 //                                            WriteTextFile(folderName, "test_N.txt", "\r\n");
@@ -401,7 +402,13 @@ public class MainActivity extends AppCompatActivity
                                         } else if (receiveMessage_split[0].equals("S") && receiveMessage_split[3].equalsIgnoreCase(monitorItemListViewAdapter.getItem(j).get_data(1)) && receiveMessage_split[4].equalsIgnoreCase(monitorItemListViewAdapter.getItem(j).get_data(2))) {
                                             monitorItemListViewAdapter.setItem(j, receiveMessage); // Monitor Listview의 해당 ID 부분 갱신
 
-                                            editor.putString("SPid", receiveMessage_split[5]);
+                                            if(receiveMessage_split[4].equals("0D"))
+                                                editor.putString("Speed", receiveMessage_split[5]);
+                                            if(receiveMessage_split[4].equals("0C")){
+                                                int A = Integer.valueOf(receiveMessage_split[5], 16);
+                                                int B = Integer.valueOf(receiveMessage_split[6], 16);
+                                                editor.putString("RPM", ((A*256 + B) / 4)+"");
+                                            }
                                             editor.commit();
 //                                            WriteTextFile(folderName, "test_S.txt", receiveMessage);
 //                                            WriteTextFile(folderName, "test_S.txt", "\r\n");
