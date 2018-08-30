@@ -392,7 +392,7 @@ public class MainActivity extends AppCompatActivity
                                         if (receiveMessage_split[0].equals("N") && receiveMessage_split[1].equalsIgnoreCase(monitorItemListViewAdapter.getItem(j).get_MsgID())) {
                                             monitorItemListViewAdapter.setItem(j, receiveMessage); // Monitor Listview의 해당 ID 부분 갱신
 
-                                            if(receiveMessage_split[4].equals("2B0"))
+                                            if(receiveMessage_split[1].equals("2B0"))
                                                 editor.putString("Steering", receiveMessage_split[3]+receiveMessage_split[2]);
                                             editor.commit();
 //                                            WriteTextFile(folderName, "test_N.txt", receiveMessage);

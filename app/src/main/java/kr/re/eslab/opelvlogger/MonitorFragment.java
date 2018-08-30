@@ -108,9 +108,9 @@ public class MonitorFragment extends ListFragment {
                 String now = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
                 String time = new SimpleDateFormat("HH_mm_ss.SSS").format(new Date());
 
-                steering = Integer.parseInt(sp.getString("Steering", "-"), 16);
-                speed = Integer.parseInt(sp.getString("Speed", "-"), 16);
-                rpm = Integer.parseInt(sp.getString("RPM", "-"));
+                steering = Integer.parseInt(sp.getString("Steering", "0"), 16);
+                speed = Integer.parseInt(sp.getString("Speed", "0"), 16);
+                rpm = Integer.parseInt(sp.getString("RPM", "0"));
 
                 if(steering > 32767)
                     steering = steering - 65535;
