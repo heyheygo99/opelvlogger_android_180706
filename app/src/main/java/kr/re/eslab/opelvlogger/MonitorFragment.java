@@ -100,22 +100,17 @@ public class MonitorFragment extends ListFragment {
         folderName = folderName + now;
 
         tt = new TimerTask() {
-            int steering;
-            int speed, rpm;
+            int steering, breakV;
 
             @Override
             public void run() {
                 String now = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
                 String time = new SimpleDateFormat("HH_mm_ss.SSS").format(new Date());
 
-                steering = Integer.parseInt(sp.getString("Steering", "0"), 16);
-                speed = Integer.parseInt(sp.getString("Speed", "0"), 16);
-                rpm = Integer.parseInt(sp.getString("RPM", "0"));
+                steering = sp.getInt("Steering", 0);
+                breakV = sp.getInt("Break", -1);
 
-                if(steering > 32767)
-                    steering = steering - 65535;
-
-                WriteTextFile(folderName, fileName, now+"_"+time+", "+steering/10+", "+speed+", "+rpm);
+                WriteTextFile(folderName, fileName, now+"_"+time+", "+steering/10+", "+ breakV);
             }
         };
 

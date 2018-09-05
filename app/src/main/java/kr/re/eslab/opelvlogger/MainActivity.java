@@ -115,6 +115,7 @@ public class MainActivity extends AppCompatActivity
 
         sp = getSharedPreferences("obd", 0);
         editor = sp.edit();
+        editor.clear();
 
         // 180512 수정사항 - 최초 시작 후 바로 추출 시 Monitor Fragment에서 ID 등록되지 않던 문제 해결
         monitorItemListViewAdapter = new monitorItemAdapter();
@@ -392,8 +393,21 @@ public class MainActivity extends AppCompatActivity
                                         if (receiveMessage_split[0].equals("N") && receiveMessage_split[1].equalsIgnoreCase(monitorItemListViewAdapter.getItem(j).get_MsgID())) {
                                             monitorItemListViewAdapter.setItem(j, receiveMessage); // Monitor Listview의 해당 ID 부분 갱신
 
-                                            if(receiveMessage_split[1].equals("2B0"))
-                                                editor.putString("Steering", receiveMessage_split[3]+receiveMessage_split[2]);
+                                            if(receiveMessage_split[1].equals("2B0")){
+                                                int steering = Integer.valueOf(receiveMessage_split[3]+receiveMessage_split[2], 16);
+
+                                                if(steering> 32767)
+                                                    steering = steering - 65535;
+                                                editor.putInt("Steering", steering);
+
+                                            }
+                                            if(receiveMessage_split[1].equals("329")){
+                                                int A = 0;
+                                                if(!receiveMessage_split[6].equals("11"))
+                                                    A = 1;
+                                                editor.putInt("Break", A);
+
+                                            }
                                             editor.commit();
 
                                             break;
