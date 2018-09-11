@@ -162,9 +162,6 @@ public class MonitorFragment extends ListFragment implements SurfaceHolder.Callb
 
                     startBtn.setBackgroundColor(getResources().getColor(R.color.red));
                     startBtn.setText("녹화 중");
-
-                    getActivity().sendBroadcast(new Intent("kr.ac.embedded.opeleyedetect.gogo"));
-
                 } else {
                     mRecorder.stop();
                     mRecorder.reset();
