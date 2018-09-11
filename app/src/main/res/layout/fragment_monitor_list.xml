@@ -64,9 +64,17 @@
         android:divider="#ffcc22"
         android:dividerHeight="1sp"
         android:scrollbars="vertical"
-        android:stackFromBottom="true"
+        android:stackFromBottom="false"
         android:visibility="visible"
         />
+
+    <SurfaceView
+        android:id="@+id/surfaceView"
+        android:layout_marginTop="40dp"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:visibility="gone"
+        android:layout_weight="8"/>
 
     <LinearLayout
         android:layout_width="match_parent"

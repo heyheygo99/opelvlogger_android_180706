@@ -97,6 +97,7 @@ public class MainActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -408,11 +409,34 @@ public class MainActivity extends AppCompatActivity
                                                 editor.putInt("Break", A);
 
                                             }
+
+                                            if(receiveMessage_split[1].equals("360")){
+                                                //Gear Position
+                                                editor.putInt("Gear", Integer.valueOf(receiveMessage_split[2], 16));
+                                            }
+
                                             editor.commit();
 
                                             break;
                                         } else if (receiveMessage_split[0].equals("S") && receiveMessage_split[3].equalsIgnoreCase(monitorItemListViewAdapter.getItem(j).get_data(1)) && receiveMessage_split[4].equalsIgnoreCase(monitorItemListViewAdapter.getItem(j).get_data(2))) {
                                             monitorItemListViewAdapter.setItem(j, receiveMessage); // Monitor Listview의 해당 ID 부분 갱신
+
+                                            if(receiveMessage_split[4].equals("0C")){
+                                                //엔진 RPM
+                                                int A = Integer.valueOf(receiveMessage_split[5], 16);
+                                                int B = Integer.valueOf(receiveMessage_split[6], 16);
+                                                editor.putInt("RPM", (((A*256)+B) / 5));
+                                            }
+                                            if(receiveMessage_split[4].equals("0D")){
+                                                // 속도
+                                                editor.putInt("Speed", Integer.valueOf(receiveMessage_split[5], 16));
+                                            }
+                                            if(receiveMessage_split[4].equals("49")){
+                                                // 악셀
+                                                int A = Integer.valueOf(receiveMessage_split[5], 16);
+                                                editor.putInt("Accel", A*100/255);
+                                            }
+
                                             break;
                                         }
                                     }
