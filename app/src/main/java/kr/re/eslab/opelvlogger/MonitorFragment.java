@@ -112,7 +112,7 @@ public class MonitorFragment extends ListFragment implements SurfaceHolder.Callb
         monitorItemListView = (ListView) view.findViewById(android.R.id.list);
         // Adapter 생성 및 Adapter 지정.
 
-        Button startBtn = (Button) view.findViewById(R.id.startBtn);
+        final Button startBtn = (Button) view.findViewById(R.id.startBtn);
         String now = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
         folderName = folderName + now;
 
@@ -127,7 +127,7 @@ public class MonitorFragment extends ListFragment implements SurfaceHolder.Callb
                 String now = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
                 String time = new SimpleDateFormat("HH_mm_ss.SSS").format(new Date());
 
-                steering = sp.getInt("Steering", 0);
+                steering = sp.getInt("Steering", 999);
                 breakV = sp.getInt("Break", -1);
                 Gear = sp.getInt("Gear", -1);
                 RPM = sp.getInt("RPM", -1);
@@ -150,6 +150,7 @@ public class MonitorFragment extends ListFragment implements SurfaceHolder.Callb
 
                 monitorItemListView.setVisibility(View.GONE);
                 mSurface.setVisibility(View.VISIBLE);
+                startBtn.setBackgroundColor(getResources().getColor(R.color.red));
 
                 initVideoRecorder();
                 startVideoRecorder();
@@ -306,9 +307,8 @@ public class MonitorFragment extends ListFragment implements SurfaceHolder.Callb
             this.getActivity().runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    String now = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
                     timeFile = new SimpleDateFormat("HH_mm_ss").format(new Date());
-                    String mFolderName = folderName + now;
+                    String mFolderName = folderName;
                     startTime = System.currentTimeMillis();
                     File file = new File(mFolderName);
                     if (!file.exists())

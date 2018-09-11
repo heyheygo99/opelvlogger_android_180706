@@ -57,7 +57,7 @@ import java.util.TimerTask;
 import static kr.re.eslab.opelvlogger.MonitorFragment.monitorItemListViewAdapter;
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, RadioGroup.OnCheckedChangeListener  {
+        implements NavigationView.OnNavigationItemSelectedListener, RadioGroup.OnCheckedChangeListener {
 
     public static boolean connect_flag = false;
 
@@ -69,7 +69,7 @@ public class MainActivity extends AppCompatActivity
     private static final int UART_PROFILE_DISCONNECTED = 21;
     private static final int STATE_OFF = 10;
 
-    private static final int REQUEST_CODE_ASK_MULTIPLE_PERMISSIONS =  1;
+    private static final int REQUEST_CODE_ASK_MULTIPLE_PERMISSIONS = 1;
 
     TextView mRemoteRssiVal;
     RadioGroup mRg;
@@ -133,36 +133,26 @@ public class MainActivity extends AppCompatActivity
         Fragment fragment = new HomeFragment();
         FragmentManager fragmentManager = getFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        fragmentTransaction.add( R.id.fragment_place, fragment);
+        fragmentTransaction.add(R.id.fragment_place, fragment);
         fragmentTransaction.commit();
 
     }
 
     @Override
     public void onBackPressed() {
+        new AlertDialog.Builder(this)
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .setTitle(R.string.popup_title)
+                .setMessage(R.string.popup_message)
+                .setPositiveButton(R.string.popup_yes, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        finish();
+                    }
+                })
+                .setNegativeButton(R.string.popup_no, null)
+                .show();
 
-        if (mState == UART_PROFILE_CONNECTED) {
-            Intent startMain = new Intent(Intent.ACTION_MAIN);
-            startMain.addCategory(Intent.CATEGORY_HOME);
-            startMain.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            startActivity(startMain);
-            showMessage("OPELvlogger's running in background.\n             Disconnect to exit");
-        }
-        else {
-            new AlertDialog.Builder(this)
-                    .setIcon(android.R.drawable.ic_dialog_alert)
-                    .setTitle(R.string.popup_title)
-                    .setMessage(R.string.popup_message)
-                    .setPositiveButton(R.string.popup_yes, new DialogInterface.OnClickListener()
-                    {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            finish();
-                        }
-                    })
-                    .setNegativeButton(R.string.popup_no, null)
-                    .show();
-        }
 //
 //        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
 //        if (drawer.isDrawerOpen(GravityCompat.START)) {
@@ -187,11 +177,9 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
         //noinspection SimplifiableIfStatement
         if (id == R.id.BLE_connect) {
-            if( mState == UART_PROFILE_CONNECTED ) {
+            if (mState == UART_PROFILE_CONNECTED) {
                 item.setChecked(true);
-            }
-
-            else if ( mState == UART_PROFILE_DISCONNECTED ) {
+            } else if (mState == UART_PROFILE_DISCONNECTED) {
                 item.setChecked(false);
             }
 
@@ -199,9 +187,8 @@ public class MainActivity extends AppCompatActivity
                 Log.i(TAG, "onClick - BT not enabled yet");
                 Intent enableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
                 startActivityForResult(enableIntent, REQUEST_ENABLE_BT);
-            }
-            else {
-                if (mDevice!=null) {
+            } else {
+                if (mDevice != null) {
                     mService.disconnect();
                 }
                 Intent newIntent = new Intent(MainActivity.this, DeviceListActivity.class);
@@ -220,8 +207,7 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
 
 
-
-        if( mState == UART_PROFILE_CONNECTED ) {
+        if (mState == UART_PROFILE_CONNECTED) {
 
             Fragment fragment = null;
 
@@ -248,9 +234,7 @@ public class MainActivity extends AppCompatActivity
 
             DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
             drawer.closeDrawer(GravityCompat.START);
-        }
-
-        else {
+        } else {
             Toast.makeText(getApplicationContext(), "Please Connect BLE to OPELvlogger", Toast.LENGTH_SHORT).show();
         }
         return true;
@@ -344,32 +328,26 @@ public class MainActivity extends AppCompatActivity
                                 receiveMessage = new String(txValue, "UTF-8");
                                 Log.d("receiveMessage", receiveMessage);
 
-                                if(receiveMessage.contains("EXTRACT_STATE_COMPLETE") == true) {
+                                if (receiveMessage.contains("EXTRACT_STATE_COMPLETE") == true) {
                                     countDownTimerFlag = true;
-                                }
-
-                                else if(receiveMessage.contains("EXTRACT_START_READY") == true) {
+                                } else if (receiveMessage.contains("EXTRACT_START_READY") == true) {
                                     countDownTimerFlag = true;
-                                }
-
-                                else if(receiveMessage.contains("EXTRACT_ID") == true) {
+                                } else if (receiveMessage.contains("EXTRACT_ID") == true) {
                                     countDownTimerFlag = true;
                                     String[] text_split_result = receiveMessage.split(" ");
                                     WriteTextFile(folderName, "test", receiveMessage);
                                     String id = text_split_result[1];
-                                    if( id.contains("NULL") == true) {
-                                        Toast.makeText(getApplicationContext(),"Fail - Extraction",Toast.LENGTH_SHORT).show();
-                                    }
-                                    else {
+                                    if (id.contains("NULL") == true) {
+                                        Toast.makeText(getApplicationContext(), "Fail - Extraction", Toast.LENGTH_SHORT).show();
+                                    } else {
 
-                                        Toast.makeText(getApplicationContext(),"Extract ID - 0x"+id ,Toast.LENGTH_SHORT).show();
+                                        Toast.makeText(getApplicationContext(), "Extract ID - 0x" + id, Toast.LENGTH_SHORT).show();
                                         String tempPacket = "N " + id + " 00 00 00 00 00 00 00 00";
 
                                         boolean addResult = monitorItemListViewAdapter.addItem(tempPacket);
-                                        if ( addResult == false) {
-                                            Toast.makeText(getApplicationContext(),"Make less than 20 monitored packets",Toast.LENGTH_SHORT).show();
-                                        }
-                                        else {
+                                        if (addResult == false) {
+                                            Toast.makeText(getApplicationContext(), "Make less than 20 monitored packets", Toast.LENGTH_SHORT).show();
+                                        } else {
                                             monitorItemListViewAdapter.notifyDataSetChanged();
                                         }
                                     }
@@ -385,8 +363,7 @@ public class MainActivity extends AppCompatActivity
                                     fragmentTransaction.commit();
 
 
-                                }
-                                else {
+                                } else {
                                     receiveMessage_split = receiveMessage.split(" ");
 
 
@@ -394,23 +371,23 @@ public class MainActivity extends AppCompatActivity
                                         if (receiveMessage_split[0].equals("N") && receiveMessage_split[1].equalsIgnoreCase(monitorItemListViewAdapter.getItem(j).get_MsgID())) {
                                             monitorItemListViewAdapter.setItem(j, receiveMessage); // Monitor Listview의 해당 ID 부분 갱신
 
-                                            if(receiveMessage_split[1].equals("2B0")){
-                                                int steering = Integer.valueOf(receiveMessage_split[3]+receiveMessage_split[2], 16);
+                                            if (receiveMessage_split[1].equals("2B0")) {
+                                                int steering = Integer.valueOf(receiveMessage_split[3] + receiveMessage_split[2], 16);
 
-                                                if(steering> 32767)
+                                                if (steering > 32767)
                                                     steering = steering - 65535;
                                                 editor.putInt("Steering", steering);
 
                                             }
-                                            if(receiveMessage_split[1].equals("329")){
+                                            if (receiveMessage_split[1].equals("329")) {
                                                 int A = 0;
-                                                if(!receiveMessage_split[6].equals("11"))
+                                                if (!receiveMessage_split[6].equals("11"))
                                                     A = 1;
                                                 editor.putInt("Break", A);
 
                                             }
 
-                                            if(receiveMessage_split[1].equals("360")){
+                                            if (receiveMessage_split[1].equals("360")) {
                                                 //Gear Position
                                                 editor.putInt("Gear", Integer.valueOf(receiveMessage_split[2], 16));
                                             }
@@ -421,20 +398,20 @@ public class MainActivity extends AppCompatActivity
                                         } else if (receiveMessage_split[0].equals("S") && receiveMessage_split[3].equalsIgnoreCase(monitorItemListViewAdapter.getItem(j).get_data(1)) && receiveMessage_split[4].equalsIgnoreCase(monitorItemListViewAdapter.getItem(j).get_data(2))) {
                                             monitorItemListViewAdapter.setItem(j, receiveMessage); // Monitor Listview의 해당 ID 부분 갱신
 
-                                            if(receiveMessage_split[4].equals("0C")){
+                                            if (receiveMessage_split[4].equals("0C")) {
                                                 //엔진 RPM
                                                 int A = Integer.valueOf(receiveMessage_split[5], 16);
                                                 int B = Integer.valueOf(receiveMessage_split[6], 16);
-                                                editor.putInt("RPM", (((A*256)+B) / 5));
+                                                editor.putInt("RPM", (((A * 256) + B) / 5));
                                             }
-                                            if(receiveMessage_split[4].equals("0D")){
+                                            if (receiveMessage_split[4].equals("0D")) {
                                                 // 속도
                                                 editor.putInt("Speed", Integer.valueOf(receiveMessage_split[5], 16));
                                             }
-                                            if(receiveMessage_split[4].equals("49")){
+                                            if (receiveMessage_split[4].equals("49")) {
                                                 // 악셀
                                                 int A = Integer.valueOf(receiveMessage_split[5], 16);
-                                                editor.putInt("Accel", A*100/255);
+                                                editor.putInt("Accel", A * 100 / 255);
                                             }
 
                                             break;
@@ -442,12 +419,11 @@ public class MainActivity extends AppCompatActivity
                                     }
                                     monitorItemListViewAdapter.notifyDataSetChanged(); // Monitor Listview 갱신
                                 }
-                            }
-                            catch (Exception e) {
+                            } catch (Exception e) {
                                 Log.e(TAG, e.toString());
                             }
                         }
-                     });
+                    });
                 }
 
                 if (action.equals(UartService.DEVICE_DOES_NOT_SUPPORT_UART)) {
@@ -467,10 +443,10 @@ public class MainActivity extends AppCompatActivity
                 dir.mkdir();
             }
             //파일 output stream 생성
-            FileWriter fos = new FileWriter(foldername + "/" + filename+".txt", true);
+            FileWriter fos = new FileWriter(foldername + "/" + filename + ".txt", true);
             //파일쓰기
             BufferedWriter writer = new BufferedWriter(fos);
-            writer.write(contents+"\r\n");
+            writer.write(contents + "\r\n");
             writer.flush();
 
             writer.close();
@@ -486,6 +462,7 @@ public class MainActivity extends AppCompatActivity
         startService(bindIntent);
         LocalBroadcastManager.getInstance(this).registerReceiver(UARTStatusChangeReceiver, makeGattUpdateIntentFilter());
     }
+
     private static IntentFilter makeGattUpdateIntentFilter() {
         final IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(UartService.ACTION_GATT_CONNECTED);
@@ -495,6 +472,7 @@ public class MainActivity extends AppCompatActivity
         intentFilter.addAction(UartService.DEVICE_DOES_NOT_SUPPORT_UART);
         return intentFilter;
     }
+
     @Override
     public void onStart() {
         super.onStart();
@@ -512,7 +490,7 @@ public class MainActivity extends AppCompatActivity
         }
         unbindService(mServiceConnection);
         mService.stopSelf();
-        mService= null;
+        mService = null;
 
     }
 
@@ -604,6 +582,8 @@ public class MainActivity extends AppCompatActivity
                 // Initial
                 perms.put(Manifest.permission.ACCESS_FINE_LOCATION, PackageManager.PERMISSION_GRANTED);
                 perms.put(Manifest.permission.WRITE_EXTERNAL_STORAGE, PackageManager.PERMISSION_GRANTED);
+                perms.put(Manifest.permission.CAMERA, PackageManager.PERMISSION_GRANTED);
+                perms.put(Manifest.permission.RECORD_AUDIO, PackageManager.PERMISSION_GRANTED);
 
 
                 // Fill with results
@@ -612,7 +592,9 @@ public class MainActivity extends AppCompatActivity
 
                 // Check for ACCESS_FINE_LOCATION
                 if (perms.get(Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
-                        ||  perms.get(Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED
+                        || perms.get(Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED
+                        || perms.get(Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED
+                        || perms.get(Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED
 
                         ) {
                     // All Permissions Granted
