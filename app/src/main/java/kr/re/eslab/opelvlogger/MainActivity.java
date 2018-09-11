@@ -36,8 +36,10 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.RadioGroup;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -97,6 +99,7 @@ public class MainActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -389,7 +392,10 @@ public class MainActivity extends AppCompatActivity
 
                                             if (receiveMessage_split[1].equals("360")) {
                                                 //Gear Position
-                                                editor.putInt("Gear", Integer.valueOf(receiveMessage_split[2], 16));
+                                                int A = Integer.valueOf(receiveMessage_split[2], 16);
+                                                // 15 13 11 9    6 4 2 0   3 2 1 0
+
+                                                editor.putInt("Gear", (A/15 - 9)/2);
                                             }
 
                                             editor.commit();
@@ -411,7 +417,7 @@ public class MainActivity extends AppCompatActivity
                                             if (receiveMessage_split[4].equals("49")) {
                                                 // 악셀
                                                 int A = Integer.valueOf(receiveMessage_split[5], 16);
-                                                editor.putInt("Accel", A * 100 / 255);
+                                                editor.putInt("Accel", (A * 100 / 255) - 14);
                                             }
 
                                             break;
@@ -620,6 +626,13 @@ public class MainActivity extends AppCompatActivity
 
         if (!addPermission(permissionsList, Manifest.permission.WRITE_EXTERNAL_STORAGE))
             permissionsNeeded.add("Write Storage");
+
+        if (!addPermission(permissionsList, Manifest.permission.CAMERA))
+            permissionsNeeded.add("Camera");
+
+        if (!addPermission(permissionsList, Manifest.permission.RECORD_AUDIO))
+            permissionsNeeded.add("Record Audio");
+
 
         if (permissionsList.size() > 0) {
             if (permissionsNeeded.size() > 0) {

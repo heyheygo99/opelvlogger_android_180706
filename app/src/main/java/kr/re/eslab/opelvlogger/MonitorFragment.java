@@ -2,6 +2,7 @@ package kr.re.eslab.opelvlogger;
 
 import android.app.Activity;
 import android.app.ListFragment;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.hardware.Camera;
 import android.media.MediaRecorder;
@@ -13,6 +14,7 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
@@ -70,6 +72,9 @@ public class MonitorFragment extends ListFragment implements SurfaceHolder.Callb
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         sp = this.getActivity().getSharedPreferences("obd", 0);
+        mRecorder = new MediaRecorder();
+        this.getActivity().getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+
     }
 
     @Override
@@ -111,13 +116,15 @@ public class MonitorFragment extends ListFragment implements SurfaceHolder.Callb
         input_ID = (EditText) view.findViewById(R.id.input_ID);
         monitorItemListView = (ListView) view.findViewById(android.R.id.list);
         // Adapter 생성 및 Adapter 지정.
+        mSurface = (SurfaceView) view.findViewById(R.id.surfaceView);
+
 
         final Button startBtn = (Button) view.findViewById(R.id.startBtn);
         String now = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
         folderName = folderName + now;
-
-        mSurface = (SurfaceView) view.findViewById(R.id.surfaceView);
-
+        File file = new File(folderName);
+        if (!file.exists())
+            file.mkdir();
 
         tt = new TimerTask() {
             int steering, breakV, Gear, RPM, Speed, Accel;
@@ -142,18 +149,33 @@ public class MonitorFragment extends ListFragment implements SurfaceHolder.Callb
         startBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String time = new SimpleDateFormat("HH_mm_ss.SSS").format(new Date());
-                fileName = time;
 
-                Timer timer = new Timer();
-                timer.schedule(tt, 0, 250);
+                if (!isRecording) {
+                    String time = new SimpleDateFormat("HH_mm_ss.SSS").format(new Date());
+                    fileName = time;
 
-                monitorItemListView.setVisibility(View.GONE);
-                mSurface.setVisibility(View.VISIBLE);
-                startBtn.setBackgroundColor(getResources().getColor(R.color.red));
+                    initVideoRecorder();
+                    startVideoRecorder();
 
-                initVideoRecorder();
-                startVideoRecorder();
+                    Timer timer = new Timer();
+                    timer.schedule(tt, 0, 250);
+
+                    startBtn.setBackgroundColor(getResources().getColor(R.color.red));
+                    startBtn.setText("녹화 중");
+
+                    getActivity().sendBroadcast(new Intent("kr.ac.embedded.opeleyedetect.gogo"));
+
+                } else {
+                    mRecorder.stop();
+                    mRecorder.reset();
+                    mRecorder.release();
+                    mRecorder = null;
+
+                    startBtn.setBackgroundColor(getResources().getColor(R.color.whitegrey));
+                    startBtn.setText("Start");
+
+                    isRecording = false;
+                }
             }
         });
 
@@ -276,6 +298,7 @@ public class MonitorFragment extends ListFragment implements SurfaceHolder.Callb
     }
 
     public void initVideoRecorder() {
+
         mCamera = Camera.open();
         Camera.Parameters p = mCamera.getParameters();
         p.setPreviewFpsRange(30000, 30000);
@@ -294,7 +317,6 @@ public class MonitorFragment extends ListFragment implements SurfaceHolder.Callb
     public void startVideoRecorder() {
 
         if (isRecording) {
-
             mRecorder.stop();
             mRecorder.release();
             mRecorder = null;
@@ -304,7 +326,7 @@ public class MonitorFragment extends ListFragment implements SurfaceHolder.Callb
         } else {
             isRecording = true;
 
-            this.getActivity().runOnUiThread(new Runnable() {
+            getActivity().runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
                     timeFile = new SimpleDateFormat("HH_mm_ss").format(new Date());
@@ -345,6 +367,7 @@ public class MonitorFragment extends ListFragment implements SurfaceHolder.Callb
             // 운전 영상 녹화 시, 시작 시간 및 종료 시간 (전체 영상 시간)
             //
         }
+
     }
 
     @Override
@@ -353,7 +376,6 @@ public class MonitorFragment extends ListFragment implements SurfaceHolder.Callb
         if (mCamera == null) {
             try {
                 mCamera.setPreviewDisplay(mSurfaceHolder);
-                Log.e("test0611", "in, surface");
                 mCamera.startPreview();
             } catch (Exception e) {
                 e.printStackTrace();
@@ -372,7 +394,7 @@ public class MonitorFragment extends ListFragment implements SurfaceHolder.Callb
     }
 
     @Override
-    public void onDestroy(){
+    public void onDestroy() {
         super.onDestroy();
 
         if (isRecording) {
@@ -384,5 +406,8 @@ public class MonitorFragment extends ListFragment implements SurfaceHolder.Callb
 
         folderName = "";
         fileName = "";
+
+        editor.clear();
+        this.getActivity().finish();
     }
 }
